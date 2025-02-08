@@ -1,0 +1,30 @@
+name: Java Build
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        jdkversion: [21]
+
+    steps:
+      - uses: actions/checkout@main
+      - uses: actions/setup-java@main
+        with:
+          distribution: "zulu"
+          java-version: ${{ matrix.jdkversion }}
+          cache: "maven"
+      - name: Clean and Build
+        run: |
+          rm -f target/* && mvn -V -B clean package
+      - name: Upload Jar
+        uses: actions/upload-artifact@main
+        with:
+          name: RealisticVillagers
+          path: target/*.jar
